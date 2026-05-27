@@ -16,6 +16,12 @@ public class Student {
     private String name;
     private String email;
     private String course;
+    private String parentName;
+    private String dateOfBirth;
+    private String phoneNumber;
+    private String address;
+    private String city;
+    private String gender;
+    private String departments;
 
-    //use list/combo box stuff here?
 }

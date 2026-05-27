@@ -23,6 +23,21 @@ public class StudentService {
         return repository.save(student);
     }
 
+    public Student updateStudent(Student student, Long id){
+        Student studentToUpdate = repository.findById(id).orElseThrow();
+        studentToUpdate.setCourse(student.getCourse());
+        studentToUpdate.setName(student.getName());
+        studentToUpdate.setEmail(student.getEmail());
+        studentToUpdate.setCity(student.getCity());
+        studentToUpdate.setPhoneNumber(student.getPhoneNumber());
+        studentToUpdate.setAddress(student.getAddress());
+        studentToUpdate.setDateOfBirth(student.getDateOfBirth());
+        studentToUpdate.setGender(student.getGender());
+        studentToUpdate.setParentName(student.getParentName());
+        studentToUpdate.setDepartments(studentToUpdate.getDepartments());
+        return repository.save(studentToUpdate);
+    }
+
     public void deleteStudent(Long id){
         repository.deleteById(id);
     }

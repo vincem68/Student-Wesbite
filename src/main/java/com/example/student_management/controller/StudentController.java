@@ -30,7 +30,14 @@ public class StudentController {
     //this will be used when the user submits the form for the new student
     @PostMapping("/registration")
     public Student registerStudent(@RequestBody Student student){
+        System.out.println("Request landed");
+        System.out.println("Retrieved student " + student);
         return service.saveStudent(student);
+    }
+
+    @PutMapping("/{id}")
+    public Student updateStudent(@RequestBody Student student, @PathVariable Long id){
+        return service.updateStudent(student, id);
     }
 
     @DeleteMapping("/{id}")
