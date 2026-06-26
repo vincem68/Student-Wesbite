@@ -14,7 +14,10 @@ public class Student {
     private Long id;
 
     private String name;
+
+    @Column(unique = true)
     private String email;
+
     private String course;
     private String parentName;
     private String dateOfBirth;
@@ -24,4 +27,6 @@ public class Student {
     private String gender;
     private String departments;
 
+    private String password;
+    private boolean isAdmin = false;
 }

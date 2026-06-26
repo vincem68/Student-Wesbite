@@ -4,6 +4,7 @@ import com.example.student_management.entity.Student;
 import com.example.student_management.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,6 +18,14 @@ public class StudentService {
 
     public List<Student> getAllStudents(){
         return repository.findAll();
+    }
+
+    public Student findStudentByCredentials(String email, String password) {
+        return repository.findByEmailAndPassword(email, password);
+    }
+
+    public Student findStudentById(Long id){
+        return repository.findById(id).orElseThrow();
     }
 
     public Student saveStudent(Student student){
@@ -34,7 +43,7 @@ public class StudentService {
         studentToUpdate.setDateOfBirth(student.getDateOfBirth());
         studentToUpdate.setGender(student.getGender());
         studentToUpdate.setParentName(student.getParentName());
-        studentToUpdate.setDepartments(studentToUpdate.getDepartments());
+        studentToUpdate.setDepartments(student.getDepartments());
         return repository.save(studentToUpdate);
     }
 
