@@ -3,8 +3,6 @@ package com.example.student_management.service;
 import com.example.student_management.entity.Student;
 import com.example.student_management.repository.StudentRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,6 +27,11 @@ public class StudentService {
     }
 
     public Student saveStudent(Student student){
+
+        Student dupStudent = repository.findByEmail(student.getEmail());
+        if (dupStudent != null){
+            return null;
+        }
         return repository.save(student);
     }
 
@@ -45,6 +48,10 @@ public class StudentService {
         studentToUpdate.setParentName(student.getParentName());
         studentToUpdate.setDepartments(student.getDepartments());
         return repository.save(studentToUpdate);
+    }
+
+    public List<Student> getAdmins(){
+        return repository.findByIsAdminTrue();
     }
 
     public void deleteStudent(Long id){

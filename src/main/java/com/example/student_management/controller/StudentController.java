@@ -1,8 +1,8 @@
 package com.example.student_management.controller;
 
-import com.example.student_management.dto.DataResponse;
 import com.example.student_management.entity.Student;
 import com.example.student_management.dto.Credentials;
+import com.example.student_management.service.EmailService;
 import com.example.student_management.service.StudentService;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class StudentController {
 
-    private final StudentService service;
+    private final StudentService studentService;
+    private final EmailService emailService;
 
-    public StudentController(StudentService service){
-        this.service = service;
+    public StudentController(StudentService studentService, EmailService emailService){
+        this.studentService = studentService;
+        this.emailService = emailService;
     }
-
 
     //this will return either all students in repo or a list of the single student
     //don't need to change student component
@@ -34,10 +35,10 @@ public class StudentController {
         System.out.println("Admin: " + isAdmin + " Id: " + id);
 
         if (Boolean.TRUE.equals(isAdmin)){
-            return service.getAllStudents();
+            return studentService.getAllStudents();
         }
 
-        Student student = service.findStudentById(id);
+        Student student = studentService.findStudentById(id);
 
         if (student == null){ return List.of(); }
 
@@ -49,7 +50,7 @@ public class StudentController {
     @PostMapping("/authorization")
     public ResponseEntity<String> login(@RequestBody Credentials credentials, HttpSession session){
 
-        Student student = service.findStudentByCredentials(credentials.getEmail(), credentials.getPassword());
+        Student student = studentService.findStudentByCredentials(credentials.getEmail(), credentials.getPassword());
 
         if (student == null){
             return ResponseEntity.notFound().build();
@@ -94,9 +95,23 @@ public class StudentController {
     //this will be used when the user submits the form for the new student
     @PostMapping("/registration")
     public Student addStudent(@RequestBody Student student){
-        System.out.println("Request landed");
-        System.out.println("Retrieved student " + student);
-        return service.saveStudent(student);
+
+        if (student == null){
+            return null;
+        }
+
+        //register student
+        Student submittedStudent = studentService.saveStudent(student);
+        //send email to newly registered student's email
+        emailService.sendRegistrationEmail(student.getEmail(), student.getName());
+
+        //get list of admin accounts and send them email about registration
+        List<Student> admins = studentService.getAdmins();
+        for (Student admin : admins){
+            emailService.sendAdminRegisterEmail(student, admin.getEmail());
+        }
+
+        return submittedStudent;
     }
 
     @GetMapping("/{id}")
@@ -114,7 +129,7 @@ public class StudentController {
             return null;
         }
 
-        return service.findStudentById(id);
+        return studentService.findStudentById(id);
     }
 
     @PutMapping("/{id}")
@@ -130,11 +145,11 @@ public class StudentController {
         if (Boolean.FALSE.equals(isAdmin)){
             return null;
         }
-        return service.updateStudent(student, id);
+        return studentService.updateStudent(student, id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable Long id){
-        service.deleteStudent(id);
+        studentService.deleteStudent(id);
     }
 }

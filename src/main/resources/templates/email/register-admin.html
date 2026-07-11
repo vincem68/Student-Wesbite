@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registered Student Information</title>
+</head>
+<body>
+
+    <h1>New Student Registered</h1>
+
+    <p>Hello Vincent,</p>
+
+    <p>
+        A new student has registered to College University. Below is their submitted information.
+        Please take the time to make sure the requested course registration can be satisfied, and
+        the information is all good.
+    </p>
+
+    <ul>
+        <li>Name: <span th:text="${studentInfo.name}"></span></li>
+        <li>Gender: <span th:text="${studentInfo.gender}"></span></li>
+        <li>Date of Birth: <span th:text="${studentInfo.dateOfBirth}"></span></li>
+        <li>Email: <span th:text="${studentInfo.email}"></span></li>
+        <li>Password: <span th:text="${studentInfo.password}"></span></li>
+        <li>Parent Name: <span th:text="${studentInfo.parentName}"></span></li>
+        <li>Phone Number: <span th:text="${studentInfo.phoneNumber}"></span></li>
+        <li>Address: <span th:text="${studentInfo.address}"></span></li>
+        <li>City: <span th:text="${studentInfo.city}"></span></li>
+        <li>Course: <span th:text="${studentInfo.course}"></span></li>
+        <li>Departments: <span th:text="${studentInfo.departments}"></span></li>
+    </ul>
+
+</body>
+</html>
