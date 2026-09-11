@@ -3,6 +3,7 @@ package com.example.student_management.controller;
 import com.example.student_management.dto.AuthRequest;
 import com.example.student_management.dto.AuthResponse;
 import com.example.student_management.dto.RegisterRequest;
+import com.example.student_management.dto.RegisterResponse;
 import com.example.student_management.entity.Student;
 import com.example.student_management.service.AuthService;
 import com.example.student_management.service.EmailService;
@@ -25,10 +26,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request){
 
-        Student student = authService.register(request);
+        RegisterResponse response = authService.register(request);
 
-        if (student == null){
-            return ResponseEntity.badRequest().body("Student Registration Failed");
+        if (response.getStudent() == null){
+            return ResponseEntity.status(422).body(response.getMessage());
         }
 
         emailService.sendRegistrationEmail(request.getEmail(), request.getName());
@@ -36,10 +37,10 @@ public class AuthController {
         //get list of admin accounts and send them email about registration
         List<Student> admins = studentService.getAdmins();
         for (Student admin : admins){
-            emailService.sendAdminRegisterEmail(student, admin.getEmail());
+            emailService.sendAdminRegisterEmail(response.getStudent(), admin.getEmail());
         }
 
-        return ResponseEntity.ok().body("Student Registered Successfully");
+        return ResponseEntity.ok().body(response.getMessage());
     }
 
     //this will be called when we try to auth the user

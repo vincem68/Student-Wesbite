@@ -24,11 +24,17 @@ public class ChatBotController {
         System.out.println("Our question is " + question.getMessage());
 
         //send question to service here
-        String response = chatBotService.askChatBot(question.getMessage());
+        String response = chatBotService.askForStatistics(question.getMessage());
 
         System.out.println("Our response is " + response);
 
         //send response here
+        return new ChatResponse(response);
+    }
+
+    @PostMapping("/general")
+    public ChatResponse answerQuestion(@RequestBody ChatMessage question){
+        String response = chatBotService.askForGeneralInfo(question.getMessage());
         return new ChatResponse(response);
     }
 }

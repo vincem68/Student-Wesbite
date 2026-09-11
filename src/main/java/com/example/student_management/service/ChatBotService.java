@@ -15,6 +15,9 @@ public class ChatBotService {
     @Value("${spring.ai.google.genai.api-key}")
     private String APIKey;
 
+    @Value("${front.end.url}")
+    private String frontendURL;
+
     private final ChatClient chatClient;
 
     @PersistenceContext
@@ -24,7 +27,7 @@ public class ChatBotService {
         this.chatClient = chatClientBuilder.build();
     }
 
-    public String askChatBot(String question){
+    public String askForStatistics(String question){
 
         //generate a query here by putting in the rules for our schema and other rules
         String prompt =
@@ -73,5 +76,51 @@ public class ChatBotService {
                 .user(responsePrompt)
                 .call()
                 .content();
+    }
+
+    public String askForGeneralInfo(String question){
+        String prompt = """
+                You are a website assistant that answers general questions about the university and the website, 
+                which is hosted on """ + frontendURL + "." + """
+                
+                If the user asks for links to other pages on the website, we have the 
+                /register page, then under the /directory page, we have pages for /email, 
+                /announcements, /tuition, /degree, /clubs, /courses, /assignments, /events, 
+                and /settings.
+                   
+                If the user asks what course you would recommend to register for based on their inputted in, the courses we 
+                offer are Cooking, Biology, Computer Science, Engineering, Nature, Expository Writing, 
+                Philosophy, Chemistry, Public Speaking, History, Geography, Geology, and Robotics. 
+                
+                If the user asks if the class is full, generate an SQL SELECT statement that gets the 
+                count of users in the requested course. The table is called 'student' with column 'course'. If the 
+                count is at or over 50, say the course is full.
+                
+                You will NOT generate any SQL statements that alter the table, or select any other information.
+              
+                The question from the user: 
+                """ + question;
+
+        //send the prompt to Gemini to create a query
+        String answer = chatClient.prompt()
+                .user(prompt) //the user inputted message to the AI
+                .call() //send the message to the AI platform
+                .content(); //the response from the AI
+
+        if (answer != null && answer.contains("COUNT(*)")){
+            String sql = answer.substring(answer.indexOf("SELECT"), answer.indexOf(";") + 1);
+            System.out.println("Query is " + sql);
+            Query query = entityManager.createNativeQuery(sql);
+            List<?> results = query.getResultList();
+
+            String sqlResponse = "The user asked " + question + " and the result was " + results
+                    + ". Make a response based off these results.";
+            return chatClient.prompt()
+                    .user(sqlResponse)
+                    .call()
+                    .content();
+        }
+
+        return answer;
     }
 }

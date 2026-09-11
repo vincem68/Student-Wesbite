@@ -14,4 +14,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByIsAdminTrue();
 
     Optional<Student> findByEmail(String email);
+
+    Long countByCourse(String course);
 }

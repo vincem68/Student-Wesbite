@@ -3,6 +3,7 @@ package com.example.student_management.service;
 import com.example.student_management.dto.AuthRequest;
 import com.example.student_management.dto.AuthResponse;
 import com.example.student_management.dto.RegisterRequest;
+import com.example.student_management.dto.RegisterResponse;
 import com.example.student_management.entity.Student;
 import com.example.student_management.repository.StudentRepository;
 import com.example.student_management.security.JWTService;
@@ -24,7 +25,25 @@ public class AuthService {
     private final StudentRepository repository;
     private final JWTService jwtService;
 
-    public Student register(RegisterRequest request){
+    public RegisterResponse register(RegisterRequest request){
+
+        //make sure no other student has the same email in repo
+        Optional<Student> dupStudent = repository.findByEmail(request.getEmail());
+        if (dupStudent.isPresent()){
+            return new RegisterResponse(
+                    null,
+                    "Another student is already registered with that email address."
+            );
+        }
+
+        //check to see if requested course is full before registering student
+        Long courseCount = repository.countByCourse(request.getCourse());
+        if (courseCount >= 50){
+            return new RegisterResponse(
+                    null,
+                    "The requested course has no more open spots."
+            );
+        }
 
         Student student = new Student();
         student.setCity(request.getCity());
@@ -41,12 +60,12 @@ public class AuthService {
                 passwordEncoder.encode(request.getPassword())
         );
 
-        Optional<Student> dupStudent = repository.findByEmail(request.getEmail());
-        if (dupStudent.isPresent()){
-            return null;
-        }
+        repository.save(student);
 
-        return repository.save(student);
+        return new RegisterResponse(
+                student,
+            "Student successfully registered."
+        );
     }
 
     public AuthResponse authenticate(AuthRequest request){
