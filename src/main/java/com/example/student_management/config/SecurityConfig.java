@@ -51,6 +51,18 @@ public class SecurityConfig {
                                 "/api/students/**")
                         .hasRole("ADMIN")
 
+                        //only verified students should be asking general landing page questions
+                        .requestMatchers(HttpMethod.POST, "/api/ai/general")
+                        .hasRole("STUDENT")
+
+                        //only admins should be able to request queries on student and course data
+                        .requestMatchers(HttpMethod.POST, "/api/ai/query")
+                        .hasRole("ADMIN")
+
+                        //we should allow unauthorized users to ask general data about courses
+                        .requestMatchers(HttpMethod.POST, "/api/ai/courses")
+                        .permitAll()
+
                         .anyRequest()
                         .authenticated()
                 )

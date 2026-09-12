@@ -33,8 +33,15 @@ public class ChatBotController {
     }
 
     @PostMapping("/general")
-    public ChatResponse answerQuestion(@RequestBody ChatMessage question){
-        String response = chatBotService.askForGeneralInfo(question.getMessage());
+    public ChatResponse answerWebsiteQuestion(@RequestBody ChatMessage question){
+        String response = chatBotService.askForWebsiteInfo(question.getMessage());
+        return new ChatResponse(response);
+    }
+
+    @PostMapping("/courses")
+    public ChatResponse answerCourseQuestion(@RequestBody ChatMessage question){
+        System.out.println("Received course question" + question.getMessage());
+        String response = chatBotService.askCourseQuestions(question.getMessage());
         return new ChatResponse(response);
     }
 }

@@ -78,7 +78,7 @@ public class ChatBotService {
                 .content();
     }
 
-    public String askForGeneralInfo(String question){
+    public String askForWebsiteInfo(String question){
         String prompt = """
                 You are a website assistant that answers general questions about the university and the website, 
                 which is hosted on """ + frontendURL + "." + """
@@ -87,10 +87,42 @@ public class ChatBotService {
                 /register page, then under the /directory page, we have pages for /email, 
                 /announcements, /tuition, /degree, /clubs, /courses, /assignments, /events, 
                 and /settings.
-                   
-                If the user asks what course you would recommend to register for based on their inputted in, the courses we 
-                offer are Cooking, Biology, Computer Science, Engineering, Nature, Expository Writing, 
-                Philosophy, Chemistry, Public Speaking, History, Geography, Geology, and Robotics. 
+                
+                If the user asks what each page is for, give a generic description of what each 
+                page's purpose is and what you can do on that page.
+                
+                You will NOT generate any SQL statements that alter the table, or select any other information.
+              
+                The question from the user: 
+                """ + question;
+
+        //send the prompt to Gemini to create a query
+        return chatClient.prompt()
+                .user(prompt) //the user inputted message to the AI
+                .call() //send the message to the AI platform
+                .content(); //the response from the AI
+    }
+
+    /**
+     * This function is used to ask general questions about the courses we offer
+     * as well as giving advice on what courses to take based off user's preferences
+     * @param question - user's text question
+     * @return - a text answer
+     */
+    public String askCourseQuestions(String question){
+
+        System.out.println("Inside Chatbot Service");
+        String prompt = """
+                You are a website assistant that answers general questions about the different courses we offer
+                at a university.
+                    
+                The courses we offer are Cooking, Biology, Computer Science, Engineering, Nature, Expository Writing, 
+                Philosophy, Chemistry, Public Speaking, History, Geography, Geology, and Robotics.
+                
+                If the user asks what course you would recommend they take, make a guess based off their interests.
+                
+                If the user asks what a course is about, respond with what a typical course of that subject
+                would include, with a generic syllabus.
                 
                 If the user asks if the class is full, generate an SQL SELECT statement that gets the 
                 count of users in the requested course. The table is called 'student' with column 'course'. If the 
