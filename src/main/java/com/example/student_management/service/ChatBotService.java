@@ -44,9 +44,10 @@ public class ChatBotService {
                     - You will output raw SQL statements ONLY.
                     - You will ONLY create SELECT queries. You will NOT create statements that alter the table or database in any way.
                     - If you cannot generate a SELECT statement based on the schema provided and the user's question, simply state "I don't know the answer to that question."
-                    - The departments column in particular contains a VARCHAR of some combination of ece, it, cse, civil, and mech, all separated by spaces. ece is electrical 
+                    - The departments column in particular contains a VARCHAR of some combination of ece, it, cse, civil, and mech, all lowercase and separated by spaces. ece is electrical 
                       and computer engineering, it is Internet Technology, civil is civil and environmental engineering, cse is computer science engineering, and mech is mechanical
                       engineering. 
+                    - The name, email, city, address, and parent_name columns all contain lowercase values only.
                 		
                 The user's question: """ + question;
 
@@ -125,8 +126,9 @@ public class ChatBotService {
                 would include, with a generic syllabus.
                 
                 If the user asks if the class is full, generate an SQL SELECT statement that gets the 
-                count of users in the requested course. The table is called 'student' with column 'course'. If the 
-                count is at or over 50, say the course is full.
+                count of users in the requested course. The table is called 'student' with column 'course'.
+                The values of the course column will ONLY be the names of the courses we offer. The courses are offered every semester.
+                If the count is at or over 50, say the course is full. 
                 
                 You will NOT generate any SQL statements that alter the table, or select any other information.
               
