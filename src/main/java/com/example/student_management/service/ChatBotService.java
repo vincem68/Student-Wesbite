@@ -127,10 +127,15 @@ public class ChatBotService {
                 
                 If the user asks if the class is full, generate an SQL SELECT statement that gets the 
                 count of users in the requested course. The table is called 'student' with column 'course'.
-                The values of the course column will ONLY be the names of the courses we offer. The courses are offered every semester.
-                If the count is at or over 50, say the course is full. 
+                The values of the course column will ONLY be the names of the courses we offer, which are Cooking, 
+                Biology, Computer Science, Engineering, Nature, Expository Writing, Philosophy, Chemistry, Public Speaking, 
+                History, Geography, Geology, and Robotics. The courses are offered every semester.
+                If the count is at or over 50, say the course is full. Do NOT make up false information regarding how many 
+                spots are open or if the course is actually closed or not.
                 
                 You will NOT generate any SQL statements that alter the table, or select any other information.
+                
+                If the user asks a question about a course we do not offer, just say we do not offer that course.
               
                 The question from the user: 
                 """ + question;
